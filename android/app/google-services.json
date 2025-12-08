@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "866784349608",
+    "project_id": "stride-sisterhood",
+    "storage_bucket": "stride-sisterhood.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866784349608:android:738731c70db9e08f7fe19d",
+        "android_client_info": {
+          "package_name": "com.example.stride_sisterhood1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFR5lG5XCxaoqEy4qjx-o2YcI0AEfL7LM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
