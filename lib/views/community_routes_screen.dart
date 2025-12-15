@@ -69,9 +69,16 @@ class CommunityRoutesScreen extends StatelessWidget {
                           Row(
                             children: [
                               IconButton(
-                                icon: Icon(Icons.favorite, color: Colors.pink[300]),
-                                onPressed: () {
-                                  viewModel.likeRoute(route.routeId!, route.likes);
+                                icon: Icon(
+                                  Icons.favorite,
+                                  color: viewModel.hasUserLiked(route)
+                                      ? Colors.red
+                                      : Colors.grey,
+                                ),
+                                onPressed: viewModel.hasUserLiked(route)
+                                    ? null
+                                    : () {
+                                  viewModel.likeRoute(route.routeId!);
                                 },
                               ),
                               Text(route.likes.toString()),

@@ -3,7 +3,8 @@ class CommunityRoute {
   final String name;
   final String description;
   final double distance;
-  final String createdBy;  final int likes;
+  final String createdBy;
+  final Map<String, bool> likedBy;
 
   CommunityRoute({
     this.routeId,
@@ -11,8 +12,14 @@ class CommunityRoute {
     required this.description,
     required this.distance,
     required this.createdBy,
-    this.likes = 0,
-  });
+    Map<String, bool>? likedBy,
+  }) : likedBy = likedBy ?? {};
+
+  int get likes => likedBy.length;
+
+  bool isLikedBy(String userId) {
+    return likedBy.containsKey(userId);
+  }
 
   factory CommunityRoute.fromMap(Map<String, dynamic> data, String documentId) {
     return CommunityRoute(
@@ -21,7 +28,7 @@ class CommunityRoute {
       description: data['description'] ?? '',
       distance: (data['distance'] ?? 0.0).toDouble(),
       createdBy: data['createdBy'] ?? 'Unknown',
-      likes: data['likes'] ?? 0,
+      likedBy: Map<String, bool>.from(data['likedBy'] ?? {}),
     );
   }
 
@@ -31,7 +38,7 @@ class CommunityRoute {
       'description': description,
       'distance': distance,
       'createdBy': createdBy,
-      'likes': likes,
+      'likedBy': likedBy,
     };
   }
 }

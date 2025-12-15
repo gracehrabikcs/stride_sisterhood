@@ -13,10 +13,16 @@ class RouteViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Stream<List<CommunityRoute>> get routesStream => _firestoreService.getRoutes();
+  Stream<List<CommunityRoute>> get routesStream =>
+      _firestoreService.getRoutes();
 
-  Future<void> likeRoute(String routeId, int currentLikes) async {
+  Future<void> likeRoute(String routeId) async {
     if (_userId == null) return;
-    await _firestoreService.likeRoute(routeId, currentLikes);
+    await _firestoreService.likeRouteOnce(routeId, _userId!);
+  }
+
+  bool hasUserLiked(CommunityRoute route) {
+    if (_userId == null) return false;
+    return route.isLikedBy(_userId!);
   }
 }

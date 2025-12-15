@@ -46,7 +46,29 @@ class FirestoreService {
         .toList());
   }
 
-  Future<void> likeRoute(String routeId, int currentLikes) async {
-    await _db.collection('routes').doc(routeId).update({'likes': currentLikes + 1});
+  Future<void> likeRouteOnce(String routeId, String userId) async {
+    final routeRef = _db.collection('routes').doc(routeId);
+
+    await _db.runTransaction((transaction) async {
+      final snapshot = await transaction.get(routeRef);
+
+      if (!snapshot.exists) return;
+
+      final data = snapshot.data()!;
+      final Map<String, dynamic> likedBy =
+      Map<String, dynamic>.from(data['likedBy'] ?? {});
+
+      // Prevent double-like
+      if (likedBy.containsKey(userId)) {
+        return;
+      }
+
+      likedBy[userId] = true;
+
+      transaction.update(routeRef, {
+        'likedBy': likedBy,
+      });
+    });
   }
+
 }
