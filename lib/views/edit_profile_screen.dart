@@ -13,29 +13,40 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _nameController;
-  late TextEditingController _paceController;
+  String _selectedPace = 'Moderate';
+
+  final List<String> _paceOptions = const [
+    'Very Slow',
+    'Slow',
+    'Moderate',
+    'Fast',
+    'Very Fast',
+  ];
 
   @override
   void initState() {
     super.initState();
     final user = context.read<UserViewModel>().user!;
     _nameController = TextEditingController(text: user.name);
-    _paceController = TextEditingController(text: user.paceRange);
+    _selectedPace = user.paceRange;
   }
 
-  Future<void> _save() async {
-    final userVM = context.read<UserViewModel>();
+  Future<void> _saveProfile() async {
+    final userViewModel = context.read<UserViewModel>();
     final firestore = context.read<FirestoreService>();
-    final user = userVM.user!;
+    final currentUser = userViewModel.user;
+
+    if (currentUser == null) return;
 
     final updatedUser = AppUser(
-      userId: user.userId,
+      userId: currentUser.userId,
       name: _nameController.text.trim(),
-      paceRange: _paceController.text.trim(),
+      paceRange: _selectedPace,
+      profileImageUrl: currentUser.profileImageUrl,
     );
 
     await firestore.saveUser(updatedUser);
-    userVM.updateUser(updatedUser);
+    userViewModel.setUser(updatedUser);
 
     if (!mounted) return;
     Navigator.pop(context);
@@ -44,30 +55,61 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Edit Profile")),
+      appBar: AppBar(
+        title: const Text("Edit Profile"),
+        actions: [
+          TextButton(
+            onPressed: _saveProfile,
+            child: const Text(
+              "Save",
+              style: TextStyle(color: Colors.white),
+            ),
+          )
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text(
+              "Name",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
-                labelText: "Username",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _paceController,
-              decoration: const InputDecoration(
-                labelText: "Pace Range",
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _save,
-              child: const Text("Save Changes"),
+
+            const Text(
+              "Pace Range",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              value: _selectedPace,
+              items: _paceOptions
+                  .map(
+                    (pace) => DropdownMenuItem(
+                  value: pace,
+                  child: Text(pace),
+                ),
+              )
+                  .toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    _selectedPace = value;
+                  });
+                }
+              },
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+              ),
             ),
           ],
         ),

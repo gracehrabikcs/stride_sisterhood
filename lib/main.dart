@@ -38,6 +38,7 @@ class StrideSisterhoodApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Stride Sisterhood',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.pink,
           scaffoldBackgroundColor: Colors.white,
