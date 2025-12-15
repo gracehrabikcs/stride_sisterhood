@@ -4,13 +4,19 @@ import 'package:stride_sisterhood/services/firestore_service.dart';
 
 class RouteViewModel extends ChangeNotifier {
   final FirestoreService _firestoreService;
+  String? _userId;
 
   RouteViewModel(this._firestoreService);
+
+  void setUserId(String userId) {
+    _userId = userId;
+    notifyListeners();
+  }
 
   Stream<List<CommunityRoute>> get routesStream => _firestoreService.getRoutes();
 
   Future<void> likeRoute(String routeId, int currentLikes) async {
+    if (_userId == null) return;
     await _firestoreService.likeRoute(routeId, currentLikes);
-    // The stream will automatically update the UI, no need to call notifyListeners.
   }
 }

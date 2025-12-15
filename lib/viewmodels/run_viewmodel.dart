@@ -4,18 +4,24 @@ import 'package:stride_sisterhood/services/firestore_service.dart';
 
 class RunViewModel extends ChangeNotifier {
   final FirestoreService _firestoreService;
-  // Hardcoded user ID for MVP
-  final String _userId = "mockUser123";
+  String? _userId;
 
   RunViewModel(this._firestoreService);
 
-  Future<void> addRun(
-      {required double distance,
-        required String time,
-        required DateTime date,
-        String? notes}) async {
+  void setUserId(String userId) {
+    _userId = userId;
+    notifyListeners();
+  }
+
+  Future<void> addRun({
+    required double distance,
+    required String time,
+    required DateTime date,
+    String? notes,
+  }) async {
+    if (_userId == null) return;
     final newRun = Run(
-      userId: _userId,
+      userId: _userId!,
       distance: distance,
       time: time,
       date: date,
@@ -24,5 +30,8 @@ class RunViewModel extends ChangeNotifier {
     await _firestoreService.addRun(newRun);
   }
 
-  Stream<List<Run>> get runsStream => _firestoreService.getRuns();
+  Stream<List<Run>> get runsStream {
+    if (_userId == null) return const Stream.empty();
+    return _firestoreService.getRuns(_userId!);
+  }
 }
