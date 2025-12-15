@@ -18,6 +18,7 @@ void main() async {
   runApp(const StrideSisterhoodApp());
 }
 
+// ------------------ App ------------------
 class StrideSisterhoodApp extends StatelessWidget {
   const StrideSisterhoodApp({super.key});
 
@@ -56,6 +57,24 @@ class StrideSisterhoodApp extends StatelessWidget {
   }
 }
 
+// ------------------ AppTab Model ------------------
+class AppTab {
+  final String label;
+  final Icon icon;
+  final Widget screen;
+
+  const AppTab({required this.label, required this.icon, required this.screen});
+}
+
+// ------------------ List of Tabs ------------------
+const List<AppTab> appTabs = [
+  AppTab(label: 'Home', icon: Icon(Icons.home), screen: HomeScreen()),
+  AppTab(label: 'Log Run', icon: Icon(Icons.add_circle_outline), screen: LogRunScreen()),
+  AppTab(label: 'History', icon: Icon(Icons.history), screen: RunHistoryScreen()),
+  AppTab(label: 'Routes', icon: Icon(Icons.map), screen: CommunityRoutesScreen()),
+];
+
+// ------------------ MainScreen ------------------
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -65,13 +84,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-
-  static final List<Widget> _widgetOptions = <Widget>[
-    const HomeScreen(),
-    const LogRunScreen(),
-    const RunHistoryScreen(),
-    const CommunityRoutesScreen(),
-  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -83,27 +95,12 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: appTabs[_selectedIndex].screen,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline),
-            label: 'Log Run',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Routes',
-          ),
-        ],
+        items: appTabs
+            .map((tab) => BottomNavigationBarItem(icon: tab.icon, label: tab.label))
+            .toList(),
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.pink[400],
         unselectedItemColor: Colors.grey[600],
