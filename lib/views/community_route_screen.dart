@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:stride_sisterhood/models/route_model.dart';
 import 'package:stride_sisterhood/viewmodels/route_viewmodel.dart';
 import 'package:stride_sisterhood/views/edit_route_screen.dart';
+import 'package:stride_sisterhood/views/new_route_screen.dart';
 
 class CommunityRoutesScreen extends StatelessWidget {
   const CommunityRoutesScreen({super.key});
@@ -14,6 +15,15 @@ class CommunityRoutesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Community Routes'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const NewRouteScreen()),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
       body: StreamBuilder<List<CommunityRoute>>(
         stream: viewModel.routesStream,
@@ -88,10 +98,8 @@ class CommunityRoutesScreen extends StatelessWidget {
                                         ? Colors.red
                                         : Colors.grey,
                                   ),
-                                  onPressed: viewModel.hasUserLiked(route)
-                                      ? null
-                                      : () {
-                                    viewModel.likeRoute(route.routeId!);
+                                  onPressed: () {
+                                    viewModel.toggleLike(route);
                                   },
                                 ),
                                 Text(route.likes.toString()),

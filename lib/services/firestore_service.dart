@@ -34,42 +34,6 @@ class FirestoreService {
         .map((doc) => Run.fromMap(doc.data(), doc.id))
         .toList());
   }
-
-  // Route Operations
-  Stream<List<CommunityRoute>> getRoutes() {
-    return _db
-        .collection('routes')
-        .orderBy('likes', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => CommunityRoute.fromMap(doc.data(), doc.id))
-        .toList());
-  }
-
-  Future<void> likeRouteOnce(String routeId, String userId) async {
-    final routeRef = _db.collection('routes').doc(routeId);
-
-    await _db.runTransaction((transaction) async {
-      final snapshot = await transaction.get(routeRef);
-
-      if (!snapshot.exists) return;
-
-      final data = snapshot.data()!;
-      final Map<String, dynamic> likedBy =
-      Map<String, dynamic>.from(data['likedBy'] ?? {});
-
-      // Prevent double-like
-      if (likedBy.containsKey(userId)) {
-        return;
-      }
-
-      likedBy[userId] = true;
-
-      transaction.update(routeRef, {
-        'likedBy': likedBy,
-      });
-    });
-  }
   Future<void> updateRun(Run run) async {
     await _db.collection('runs').doc(run.runId).update(run.toMap());
   }
@@ -77,6 +41,22 @@ class FirestoreService {
   Future<void> deleteRun(String runId) async {
     await _db.collection('runs').doc(runId).delete();
   }
+
+  // Route Operations
+  // Route Operations
+  Stream<List<CommunityRoute>> getRoutes() {
+    return _db
+        .collection('routes')
+        //.orderBy('likes', descending: true)
+        .snapshots()
+        .map((snapshot) =>
+        snapshot.docs.map((doc) => CommunityRoute.fromMap(doc.data(), doc.id)).toList());
+  }
+
+  Future<void> addRoute(CommunityRoute route) async {
+    await _db.collection('routes').add(route.toMap());
+  }
+
   Future<void> updateRoute(CommunityRoute route) async {
     if (route.routeId == null) return;
     await _db.collection('routes').doc(route.routeId).update(route.toMap());
@@ -84,6 +64,29 @@ class FirestoreService {
 
   Future<void> deleteRoute(String routeId) async {
     await _db.collection('routes').doc(routeId).delete();
+  }
+
+  // Toggle like for a route
+  Future<void> toggleLike(String routeId, String userId) async {
+    final routeRef = _db.collection('routes').doc(routeId);
+    await _db.runTransaction((transaction) async {
+      final snapshot = await transaction.get(routeRef);
+      if (!snapshot.exists) return;
+
+      final data = snapshot.data()!;
+      final likedBy = Map<String, bool>.from(data['likedBy'] ?? {});
+
+      if (likedBy.containsKey(userId)) {
+        likedBy.remove(userId);
+      } else {
+        likedBy[userId] = true;
+      }
+
+      transaction.update(routeRef, {
+        'likedBy': likedBy,
+        'likes': likedBy.length,
+      });
+    });
   }
 
 

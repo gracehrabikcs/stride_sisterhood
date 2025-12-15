@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:stride_sisterhood/views/home_screen.dart';
 import 'package:stride_sisterhood/views/log_run_screen.dart';
 import 'package:stride_sisterhood/views/run_history_screen.dart';
-import 'package:stride_sisterhood/views/community_routes_screen.dart';
+import 'package:stride_sisterhood/views/community_route_screen.dart';
 
 // AppTab model
 class AppTab {

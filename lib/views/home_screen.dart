@@ -6,7 +6,7 @@ import 'package:stride_sisterhood/views/edit_profile_screen.dart';
 import 'package:stride_sisterhood/views/login_screen.dart';
 import 'package:stride_sisterhood/views/log_run_screen.dart';
 import 'package:stride_sisterhood/views/run_history_screen.dart';
-import 'package:stride_sisterhood/views/community_routes_screen.dart';
+import 'package:stride_sisterhood/views/community_route_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
