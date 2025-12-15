@@ -77,6 +77,15 @@ class FirestoreService {
   Future<void> deleteRun(String runId) async {
     await _db.collection('runs').doc(runId).delete();
   }
+  Future<void> updateRoute(CommunityRoute route) async {
+    if (route.routeId == null) return;
+    await _db.collection('routes').doc(route.routeId).update(route.toMap());
+  }
+
+  Future<void> deleteRoute(String routeId) async {
+    await _db.collection('routes').doc(routeId).delete();
+  }
+
 
 
 }

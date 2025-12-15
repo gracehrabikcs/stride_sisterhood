@@ -25,4 +25,12 @@ class RouteViewModel extends ChangeNotifier {
     if (_userId == null) return false;
     return route.isLikedBy(_userId!);
   }
+
+  Future<void> updateRoute(CommunityRoute route) async {
+    await _firestoreService.updateRoute(route);
+  }
+
+  Future<void> deleteRoute(String routeId) async {
+    await _firestoreService.deleteRoute(routeId);
+  }
 }
