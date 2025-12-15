@@ -4,41 +4,48 @@ import 'package:stride_sisterhood/models/user_model.dart';
 import 'package:stride_sisterhood/services/firestore_service.dart';
 import 'package:stride_sisterhood/viewmodels/run_viewmodel.dart';
 import 'package:stride_sisterhood/viewmodels/route_viewmodel.dart';
-import 'package:stride_sisterhood/viewmodels/user_viewmodel.dart';
-import 'package:stride_sisterhood/views/create_account_screen.dart';
 import 'package:stride_sisterhood/views/main_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class CreateAccountScreen extends StatefulWidget {
+  const CreateAccountScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _usernameController = TextEditingController();
+  final _paceController = TextEditingController(text: "Moderate");
   String? _error;
 
-  Future<void> _signIn() async {
+  Future<void> _createAccount() async {
     final username = _usernameController.text.trim();
-    if (username.isEmpty) return;
+    final paceRange = _paceController.text.trim();
+
+    if (username.isEmpty) {
+      setState(() => _error = "Username required");
+      return;
+    }
 
     final userId = username.replaceAll(' ', '_').toLowerCase();
     final firestore = context.read<FirestoreService>();
 
-    final AppUser? user = await firestore.getUser(userId);
-
-    if (user == null) {
-      setState(() {
-        _error = "User not found. Please create an account.";
-      });
+    final existingUser = await firestore.getUser(userId);
+    if (existingUser != null) {
+      setState(() => _error = "Username already exists");
       return;
     }
 
-    // 🔐 Set user state
-    context.read<UserViewModel>().setUser(user);
-    context.read<RunViewModel>().setUserId(user.userId);
-    context.read<RouteViewModel>().setUserId(user.userId);
+    final user = AppUser(
+      userId: userId,
+      name: username,
+      paceRange: paceRange,
+    );
+
+    await firestore.saveUser(user);
+
+    context.read<RunViewModel>().setUserId(userId);
+    context.read<RouteViewModel>().setUserId(userId);
 
     if (!mounted) return;
     Navigator.pushReplacement(
@@ -50,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Sign In")),
+      appBar: AppBar(title: const Text("Create Account")),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -62,26 +69,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _paceController,
+              decoration: const InputDecoration(
+                labelText: "Pace Range",
+                border: OutlineInputBorder(),
+              ),
+            ),
             if (_error != null) ...[
               const SizedBox(height: 8),
               Text(_error!, style: const TextStyle(color: Colors.red)),
             ],
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: _signIn,
-              child: const Text("Sign In"),
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const CreateAccountScreen(),
-                  ),
-                );
-              },
-              child: const Text("Create an account"),
+              onPressed: _createAccount,
+              child: const Text("Create Account"),
             ),
           ],
         ),

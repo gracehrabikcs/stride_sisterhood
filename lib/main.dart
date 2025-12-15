@@ -6,6 +6,7 @@ import 'package:stride_sisterhood/services/firestore_service.dart';
 import 'package:stride_sisterhood/viewmodels/run_viewmodel.dart';
 import 'package:stride_sisterhood/viewmodels/route_viewmodel.dart';
 import 'package:stride_sisterhood/views/login_screen.dart';
+import 'package:stride_sisterhood/viewmodels/user_viewmodel.dart';
 import 'package:stride_sisterhood/views/main_screen.dart';
 
 void main() async {
@@ -25,6 +26,9 @@ class StrideSisterhoodApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<FirestoreService>(create: (_) => FirestoreService()),
+        ChangeNotifierProvider<UserViewModel>(
+          create: (_) => UserViewModel(),
+        ),
         ChangeNotifierProvider<RunViewModel>(
           create: (context) => RunViewModel(context.read<FirestoreService>()),
         ),
