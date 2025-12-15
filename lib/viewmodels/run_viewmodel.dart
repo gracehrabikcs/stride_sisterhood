@@ -34,4 +34,14 @@ class RunViewModel extends ChangeNotifier {
     if (_userId == null) return const Stream.empty();
     return _firestoreService.getRuns(_userId!);
   }
+
+  Future<void> updateRun(Run run) async {
+    if (_userId == null || run.runId == null) return;
+    await _firestoreService.updateRun(run);
+  }
+
+  Future<void> deleteRun(String runId) async {
+    if (_userId == null) return;
+    await _firestoreService.deleteRun(runId);
+  }
 }

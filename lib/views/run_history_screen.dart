@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stride_sisterhood/models/run_model.dart';import 'package:stride_sisterhood/viewmodels/run_viewmodel.dart';
+import 'package:stride_sisterhood/models/run_model.dart';
+import 'package:stride_sisterhood/viewmodels/run_viewmodel.dart';
+import 'package:stride_sisterhood/views/edit_run_screen.dart';
 import 'package:intl/intl.dart';
 
 class RunHistoryScreen extends StatelessWidget {
@@ -8,7 +10,7 @@ class RunHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<RunViewModel>(context, listen: false);
+    final viewModel = Provider.of<RunViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -52,7 +54,12 @@ class RunHistoryScreen extends StatelessWidget {
                       '${DateFormat.yMMMd().format(run.date)} - ${run.time}'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
-                    // Optional: Navigate to a detailed run view
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EditRunScreen(run: run),
+                      ),
+                    );
                   },
                 ),
               );

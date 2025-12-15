@@ -70,5 +70,13 @@ class FirestoreService {
       });
     });
   }
+  Future<void> updateRun(Run run) async {
+    await _db.collection('runs').doc(run.runId).update(run.toMap());
+  }
+
+  Future<void> deleteRun(String runId) async {
+    await _db.collection('runs').doc(runId).delete();
+  }
+
 
 }
